@@ -1,0 +1,14 @@
+html, body {
+    height: 100%;
+}
+body {
+    font-family: sans-serif;
+    overflow: hidden;
+}
+#preloader {
+    font-size: 28px;
+    width: 400px;
+    text-align: center;
+    margin: 300px auto 0;
+    color: #eee;
+}

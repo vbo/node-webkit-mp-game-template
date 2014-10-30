@@ -1,0 +1,25 @@
+{
+    "name": "game-name",
+    "version": "0.0.1",
+    "dependencies": {
+    },
+    "main": "launcher.html",
+    "nw": {
+        "fullscreen": false,
+        "tools": true
+    },
+    "window": {
+        "title": "game-name",
+        "icon": "link.png",
+        "toolbar": false,
+        "frame": true,
+        "show": true,
+        "kiosk": false,
+        "fullscreen": false,
+        "always-on-top": true,
+        "resizable": true
+    },
+    "webkit": {
+        "plugin": false
+    }
+}

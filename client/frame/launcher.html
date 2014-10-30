@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function startPipeline() {
+            // use require.js to solve dependencies between multimedia subsystems
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.setAttribute("data-main", "launcher");
+            script.src = "lib/require.js";
+            document.body.appendChild(script);
+        }
+        function initWindow(clb) {
+            var gui = require('nw.gui');
+            var win = gui.Window.get();
+            var conf = gui.App.manifest.nw;
+            if (conf.tools) {
+                win.setAlwaysOnTop(false);
+                win.moveTo(40, 40);
+                win.resizeTo(1200, 700);
+                win.showDevTools();
+                win.focus();
+            } else if (conf.fullscreen) {
+                win.setAlwaysOnTop(true);
+                win.setResizable(false);
+                win.enterKioskMode();
+                win.enterKioskMode(); // yep, call this twice. This is known bug in node-webkit
+            } else {
+                // windowed mode (dimensions should be specified in package.json
+                win.setAlwaysOnTop(false);
+                win.focus();
+            }
+            process.on('uncaughtException', function(err) {
+                console.log("ERROR", err.message, err.stack);
+            });
+            setTimeout(clb, 1000);
+        }
+    </script>
+    <link rel="stylesheet" href="resource/css/style.css"/>
+</head>
+<body onload="initWindow(startPipeline)" style="background-color: gray; margin: 0;">
+    <div id="preloader" style="">LOADING...</div>
+</body>
+</html>
