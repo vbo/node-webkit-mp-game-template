@@ -21,3 +21,7 @@ exports.sound = {
         laser: 'audio/effect/laser.ogg'
     }
 };
+// graphics
+exports.graphics = {
+    shaders: ["identity"]
+};

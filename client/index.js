@@ -3,6 +3,7 @@
 // and accessible through `./frame` module
 var frame = require("./frame");
 var config = require("./config");
+var render = require("./render");
 
 if (config.debug) {
     // refresh
@@ -11,6 +12,10 @@ if (config.debug) {
     });
 }
 
-frame.$('body').text("Hello world!");
-frame.sound.setMusicMood("menu");
+frame.sound.setMusicMood("calm");
 frame.sound.play("alarm", 2);
+render.show();
+
+setInterval(function () {
+    render.redraw();
+}, 32);

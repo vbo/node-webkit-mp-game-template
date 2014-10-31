@@ -135,7 +135,7 @@ define(["resource", "storage"], function (resource, storage) {
     BufferLoader.prototype.loadBuffer = function(url, index) {
         // Load buffer asynchronously
         var loader = this;
-        resource.load(url, function (content) {
+        resource.load(url, "binary", function (content) {
             // Asynchronously decode the audio file data
             loader.context.decodeAudioData(
                 content,

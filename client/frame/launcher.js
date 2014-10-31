@@ -17,12 +17,20 @@ requirejs.onError = function (err) {
     throw err;
 };
 
-requirejs(["jquery", "jquery.hotkeys", "storage", "resource", "sound"], function ($, _, storage, resource, sound) {
+requirejs([
+    "jquery", "jquery.hotkeys", "storage", "resource", "sound", "graphics"
+], function (
+    $, _, storage, resource, sound, graphics
+) {
     var config = require("../config");
     var gui = require("nw.gui");
     config.debug = !!gui.App.manifest.nw.tools;
-    sound.init(config.sound, function () {
-        require("../frame").init(gui, window, $, storage, resource, sound);
+    var async = require("async");
+    async.parallel([
+        function (clb) { sound.init(config.sound, clb); },
+        function (clb) { graphics.init(config.graphics, clb); }
+    ], function () {
+        require("../frame").init(gui, window, $, storage, resource, sound, graphics);
         $('#preloader').hide();
         require("../index");
     });
