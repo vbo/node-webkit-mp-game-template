@@ -12,3 +12,5 @@ if (config.debug) {
 }
 
 frame.$('body').text("Hello world!");
+frame.sound.setMusicMood("menu");
+frame.sound.play("alarm", 2);
