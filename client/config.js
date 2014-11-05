@@ -1,3 +1,4 @@
+// general
 // debug
 exports.debug = false; // can be reset from `frame`
 // sound
@@ -23,5 +24,16 @@ exports.sound = {
 };
 // graphics
 exports.graphics = {
-    shaders: ["identity"]
+    shaders: ["identity", "sprite"]
+};
+// application
+// render
+exports.render = {
+    defaultScale: 24.0,
+    spritesheets: {
+        default: {
+            url: "image/sprites-default-free.png",
+            ratio: 24.0 / 512.0
+        }
+    }
 };
