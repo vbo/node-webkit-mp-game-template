@@ -25,24 +25,30 @@ render.init(function () {
 });
 
 bindShortcut("meta+=", function () {
-    render.setScale(render.getScale() + 1);
+    render.setScale(render.getScale() + 0.01);
 });
 bindShortcut("meta+-", function () {
-    render.setScale(render.getScale() - 1);
+    render.setScale(render.getScale() - 0.01);
 });
 bindShortcut("w", function () {
     var camera = render.getCamera();
-    render.setCamera([camera[0], camera[1] - 1]);
+    render.setCamera([camera[0], camera[1] - 0.001]);
 });
 bindShortcut("s", function () {
     var camera = render.getCamera();
-    render.setCamera([camera[0], camera[1] + 1]);
+    render.setCamera([camera[0], camera[1] + 0.001]);
 });
 bindShortcut("d", function () {
     var camera = render.getCamera();
-    render.setCamera([camera[0] - 1, camera[1]]);
+    render.setCamera([camera[0] - 0.001, camera[1]]);
 });
 bindShortcut("a", function () {
     var camera = render.getCamera();
-    render.setCamera([camera[0] + 1, camera[1]]);
+    render.setCamera([camera[0] + 0.001, camera[1]]);
+});
+bindShortcut("q", function () {
+    render.setRotation(render.getRotation() + 0.001);
+});
+bindShortcut("e", function () {
+    render.setRotation(render.getRotation() - 0.001);
 });

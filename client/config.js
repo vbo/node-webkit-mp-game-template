@@ -30,6 +30,7 @@ exports.graphics = {
 // render
 exports.render = {
     defaultScale: 24.0,
+    spriteSize: 24.0,
     spritesheets: {
         default: {
             url: "image/sprites-default-free.png",

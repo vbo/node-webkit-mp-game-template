@@ -15,6 +15,8 @@ exports.setScale = setScale;
 exports.getScale = getScale;
 exports.setCamera = setCamera;
 exports.getCamera = getCamera;
+exports.setRotation = setRotation;
+exports.getRotation = getRotation;
 
 // init context
 var canvas = exports.canvas = require("./canvas");
@@ -31,6 +33,7 @@ var scaleVec = glm.vec3.create(); scaleVec[2] = 1;
 var cameraVec = glm.vec3.create(); cameraVec[2] = 0;
 var cameraShift = [0.0, 0.0];
 var scaleFactor = 1;
+var rotation = 0.0;
 var scaleMatrix = glm.mat4.create();
 var resultingMatrix = glm.mat4.create();
 
@@ -74,18 +77,19 @@ mapChunk.fill([
     new Sprite(1, 2, 0, 0, 2),
     new Sprite(2, 2, 0, 0, 2),
     new Sprite(3, 2, 0, 0, 2),
-    new Sprite(snapToPixel(2.099), 1, 10, 5, 0)
+    new Sprite(2.099, 1, 10, 5, 0)
 ]);
 
 exports.redraw = function () {
-    scaleVec[0] = scaleFactor | 0;
-    scaleVec[1] = scaleFactor | 0;
+    scaleVec[0] = scaleFactor;
+    scaleVec[1] = scaleFactor;
     glm.mat4.identity(scaleMatrix);
     glm.mat4.scale(scaleMatrix, scaleMatrix, scaleVec);
     glm.mat4.multiply(resultingMatrix, screenProjectionMatrix, scaleMatrix);
-    cameraVec[0] = snapToPixel(cameraShift[0]);
-    cameraVec[1] = snapToPixel(cameraShift[1]);
+    cameraVec[0] = cameraShift[0];
+    cameraVec[1] = cameraShift[1];
     glm.mat4.translate(resultingMatrix, resultingMatrix, cameraVec);
+    glm.mat4.rotate(resultingMatrix, resultingMatrix, rotation, [0, 0, 1]);
     clear();
     mapTilesRender.draw([mapChunk], resultingMatrix);
 };
@@ -99,8 +103,18 @@ function setScale (factor) {
     scaleFactor = factor;
     clear();
 }
+
 function getScale () {
     return scaleFactor;
+}
+
+function setRotation (rad) {
+    rotation = rad;
+    clear();
+}
+
+function getRotation () {
+    return rotation;
 }
 
 function setCamera (shift) {
@@ -111,10 +125,6 @@ function setCamera (shift) {
 
 function getCamera () {
     return cameraShift;
-}
-
-function snapToPixel (value) {
-    return Math.ceil(value * scaleFactor) / scaleFactor;
 }
 
 function onResize () {

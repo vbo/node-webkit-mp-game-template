@@ -3,7 +3,8 @@ var async = require("async");
 var resource = require("../frame").resource;
 var config = require("../config").render;
 
-var gl = require("./canvas").gl;
+var canvas = require("./canvas");
+var gl = canvas.gl;
 
 var sheetTextures = {};
 
@@ -89,26 +90,27 @@ exports.SpriteBuffer = (function () {
 
     function tessellateSprite (sprite, buf, index) {
         var x = sprite.x, y = sprite.y, z = sprite.z, tx = sprite.tx, ty = sprite.ty;
+        var halfTexelCorrection = 0.5 / config.spriteSize;
         // left triangle
         // 0, 0
         buf[index++] = x; buf[index++] = y; buf[index++] = z;
-        buf[index++] = tx; buf[index++] = ty + 1.0;
+        buf[index++] = tx + halfTexelCorrection; buf[index++] = ty - halfTexelCorrection + 1.0;
         // 0, 1
         buf[index++] = x; buf[index++] = y + 1.0; buf[index++] = z;
-        buf[index++] = tx; buf[index++] = ty;
+        buf[index++] = tx + halfTexelCorrection; buf[index++] = ty + halfTexelCorrection;
         // 1, 0
         buf[index++] = x + 1.0; buf[index++] = y; buf[index++] = z;
-        buf[index++] = tx + 1.0; buf[index++] = ty + 1.0;
+        buf[index++] = tx - halfTexelCorrection + 1.0; buf[index++] = ty - halfTexelCorrection + 1.0;
         // right triangle
         // 0, 1
         buf[index++] = x; buf[index++] = y + 1.0; buf[index++] = z;
-        buf[index++] = tx; buf[index++] = ty;
+        buf[index++] = tx + halfTexelCorrection; buf[index++] = ty + halfTexelCorrection;
         // 1, 1
         buf[index++] = x + 1.0; buf[index++] = y + 1.0; buf[index++] = z;
-        buf[index++] = tx + 1.0; buf[index++] = ty;
+        buf[index++] = tx - halfTexelCorrection + 1.0; buf[index++] = ty + halfTexelCorrection;
         // 1, 0
         buf[index++] = x + 1.0; buf[index++] = y; buf[index++] = z;
-        buf[index++] = tx + 1.0; buf[index++] = ty + 1.0;
+        buf[index++] = tx - halfTexelCorrection + 1.0; buf[index++] = ty - halfTexelCorrection + 1.0;
         return index;
     }
 

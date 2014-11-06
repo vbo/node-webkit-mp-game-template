@@ -4,12 +4,13 @@ var frame = require("../frame");
 var $ = frame.$;
 var graphics = frame.graphics;
 
-var devicePixelRatio = frame.nativeWindow['devicePixelRatio'] || 1;
-
 // emits: resize
 var canvas = module.exports = new EventEmitter();
 canvas.width = 0;
 canvas.height = 0;
+
+var devicePixelRatio = canvas.devicePixelRatio = frame.nativeWindow['devicePixelRatio'] || 1;
+
 
 // create markup
 var $canvas = $('<canvas class="panel"></canvas>').hide().appendTo("body");
