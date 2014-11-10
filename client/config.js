@@ -37,3 +37,7 @@ exports.render = {
         }
     }
 };
+// local server
+exports.localServer = {
+    port: 25561
+};
