@@ -14,7 +14,7 @@ exports.start = function (port) {
         throw new Error("Server process died with code: " + code);
     });
     if (require("./config").debug) {
-        child.stdout.setEncoding("utf-8");
+        child.stdout.setEncoding("utf8");
         child.stdout.on("data", function (chunk) {
             console.log("SERVER: " + chunk);
         });

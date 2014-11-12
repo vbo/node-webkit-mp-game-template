@@ -1,0 +1,8 @@
+{
+    "name": "networking",
+    "version": "0.0.1",
+    "dependencies": {
+        "bitfield": "1.x"
+    },
+    "private": true
+}

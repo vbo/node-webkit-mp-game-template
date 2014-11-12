@@ -1,17 +1,31 @@
 var readline = require('readline');
-var dgram = require("dgram");
+var networking = require('../networking');
+var protocol = require('../protocol');
 
 var PORT = process.argv[2] | 0;
-var socket = dgram.createSocket("udp4");
 
-socket.on("message", function (packet, remote) {
-    console.log("got " + packet.toString("utf-8") + " from " + remote.address + ":" + remote.port);
-    var buf = new Buffer("EHLO", "utf-8");
-    socket.send(buf, 0, buf.length, remote.port, remote.address);
+var connection = networking.createConnection();
+
+connection.on("listening", function () {
+    console.log("Server is listening!", connection.listening);
 });
 
-socket.bind(PORT);
-socket.unref();
+connection.on("peer", function (peer) {
+    console.log("New connection from " + peer.id);
+    peer.on("message", function (msg) {
+        if (msg instanceof protocol.TextMessage) {
+            console.log("Got text message from " + peer.id + ": " + msg.text);
+            peer.send(new protocol.TextMessage("OLEH"));
+        } else {
+            console.log("Got " + (typeof msg) + " from " + peer.id + "!", msg);
+        }
+    });
+    peer.on("disconnect", function () {
+        console.log(peer.id + " have been diconnected");
+    });
+});
+connection.listen(PORT);
+connection.socket.unref();
 
 // server command-line interface
 process.stdin.resume();
@@ -22,7 +36,7 @@ var rl = readline.createInterface({
 });
 rl.on('line', function (line) {
     if (line == "kill" || line == "stop") {
-        return process.exit();
+        process.exit();
     }
     return null;
 });
