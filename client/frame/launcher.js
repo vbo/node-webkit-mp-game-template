@@ -24,6 +24,11 @@ requirejs([
 ) {
     var config = require("../config");
     var gui = require("nw.gui");
+    if (process.platform == "darwin") {
+        var menu = new gui.Menu({type: 'menubar'});
+        menu.createMacBuiltin("My App");
+        gui.Window.get().menu = menu;
+    }
     config.debug = !!gui.App.manifest.nw.tools;
     var async = require("async");
     async.parallel([

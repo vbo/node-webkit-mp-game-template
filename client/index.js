@@ -42,14 +42,15 @@ server.on("message", function (msg) {
 });
 
 function exitHandler () {
-    connection.close();
-    serverProcess.stop();
+    try { connection.close(); } catch (e) {}
+    try { serverProcess.stop(); } catch (e) {}
+    Object.keys(require.cache).forEach(function (k) { delete require.cache[k]; })
 }
 process.on("exit", exitHandler);
 process.on("SIGINT", exitHandler);
 guiWindow.on("close", function () {
     exitHandler();
-    guiWindow.close(true);
+    this.close(true);
 });
 
 frame.sound.setMusicMood("calm");
