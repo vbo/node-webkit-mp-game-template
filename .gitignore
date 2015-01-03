@@ -2,3 +2,5 @@
 *.iml
 *.swp
 node_modules
+/bin/
+/client/frame/resource/image/*nonfree*
