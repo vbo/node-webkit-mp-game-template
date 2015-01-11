@@ -32,8 +32,9 @@ exports.render = {
     defaultScale: 24.0,
     spritesheets: {
         default: {
-            url: "image/sprites-default-free.png",
-            ratio: 24.0 / 512.0
+            url: "image/sprites-default-nonfree.png",
+            sprite_size: 32.0,
+            size: 512.0
         }
     }
 };

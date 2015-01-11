@@ -15,6 +15,8 @@ exports.setScale = setScale;
 exports.getScale = getScale;
 exports.setCamera = setCamera;
 exports.getCamera = getCamera;
+exports.setRotation = setRotation;
+exports.getRotation = getRotation;
 
 // init context
 var canvas = exports.canvas = require("./canvas");
@@ -27,12 +29,15 @@ gl.depthFunc(gl.LESS);
 
 // init coordinate system
 var screenProjectionMatrix = glm.mat4.create();
+var cameraViewProjectionMatrix = glm.mat4.create();
 var scaleVec = glm.vec3.create(); scaleVec[2] = 1;
 var cameraVec = glm.vec3.create(); cameraVec[2] = 0;
-var cameraShift = [0.0, 0.0];
-var scaleFactor = 1;
-var scaleMatrix = glm.mat4.create();
-var resultingMatrix = glm.mat4.create();
+var rotationRad = 0.0;
+var cameraViewTransforms = {
+    scale: glm.mat4.create(),
+    rotation: glm.mat4.create(),
+    translation: glm.mat4.create()
+};
 
 // handle resize
 canvas.on("resize", onResize);
@@ -74,20 +79,28 @@ mapChunk.fill([
     new Sprite(1, 2, 0, 0, 2),
     new Sprite(2, 2, 0, 0, 2),
     new Sprite(3, 2, 0, 0, 2),
-    new Sprite(snapToPixel(2.099), 1, 10, 5, 0)
+    new Sprite(2.099, 1, 10, 5, 0)
 ]);
 
 exports.redraw = function () {
-    scaleVec[0] = scaleFactor | 0;
-    scaleVec[1] = scaleFactor | 0;
-    glm.mat4.identity(scaleMatrix);
-    glm.mat4.scale(scaleMatrix, scaleMatrix, scaleVec);
-    glm.mat4.multiply(resultingMatrix, screenProjectionMatrix, scaleMatrix);
-    cameraVec[0] = snapToPixel(cameraShift[0]);
-    cameraVec[1] = snapToPixel(cameraShift[1]);
-    glm.mat4.translate(resultingMatrix, resultingMatrix, cameraVec);
+    glm.mat4.identity(cameraViewTransforms.scale);
+    glm.mat4.scale(cameraViewTransforms.scale, cameraViewTransforms.scale, scaleVec);
+
+    glm.mat4.identity(cameraViewTransforms.translation);
+    glm.mat4.translate(cameraViewTransforms.translation, cameraViewTransforms.translation, cameraVec);
+
+    glm.mat4.identity(cameraViewTransforms.rotation);
+    glm.mat4.rotate(cameraViewTransforms.rotation, cameraViewTransforms.rotation, rotationRad, [0, 0, 1]);
+
+    glm.mat4.identity(cameraViewProjectionMatrix);
+    glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.translation, cameraViewProjectionMatrix);
+    glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.scale, cameraViewProjectionMatrix);
+    glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.rotation, cameraViewProjectionMatrix);
+
+    glm.mat4.multiply(cameraViewProjectionMatrix, screenProjectionMatrix, cameraViewProjectionMatrix);
+
     clear();
-    mapTilesRender.draw([mapChunk], resultingMatrix);
+    mapTilesRender.draw([mapChunk], cameraViewProjectionMatrix);
 };
 
 // utility functions
@@ -96,29 +109,33 @@ function clear () {
 }
 
 function setScale (factor) {
-    scaleFactor = factor;
+    scaleVec[0] = factor;
+    scaleVec[1] = factor;
     clear();
 }
 function getScale () {
-    return scaleFactor;
+    return scaleVec[0];
 }
 
 function setCamera (shift) {
-    cameraShift[0] = shift[0];
-    cameraShift[1] = shift[1];
-    clear();
+    cameraVec[0] = shift[0];
+    cameraVec[1] = shift[1];
 }
 
 function getCamera () {
-    return cameraShift;
+    return cameraVec;
 }
 
-function snapToPixel (value) {
-    return Math.ceil(value * scaleFactor) / scaleFactor;
+function setRotation (rad) {
+    rotationRad = rad;
+}
+
+function getRotation () {
+    return rotationRad;
 }
 
 function onResize () {
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    glm.mat4.ortho(screenProjectionMatrix, 0, canvas.width, 0, canvas.height, -100, 1);
+    glm.mat4.ortho(screenProjectionMatrix, -canvas.width/2, canvas.width/2, -canvas.height/2, canvas.height/2, -100, 1);
     clear();
 }
