@@ -37,7 +37,7 @@ exports.Sprite = function (x, y, z, tx, ty) {
 exports.SpriteBuffer = (function () {
     var verticesPerSprite = 6; // two triangles
     var floatsForPosition = 3; // xyz
-    var floatsForTexCoord = 2; // st
+    var floatsForTexCoord = 4; // stuv
     var floatsPerVertex = floatsForPosition + floatsForTexCoord;
     var floatsPerSprite = verticesPerSprite * floatsPerVertex;
 
@@ -88,27 +88,46 @@ exports.SpriteBuffer = (function () {
     };
 
     function tessellateSprite (sprite, buf, index) {
-        var x = sprite.x, y = sprite.y, z = sprite.z, tx = sprite.tx, ty = sprite.ty;
-        // left triangle
-        // 0, 0
+        // Tessellates a given sprite to two triangles.
+        // ^ y
+        // |
+        // |  lt    rt
+        // |    ---
+        // |   |\ 2|
+        // |   | \ |
+        // |   |1 \|
+        // |    ---
+        // |  lb    rb
+        //  --------------> x
+        // First (left) triangle vertices: lb, lt, rb
+        // Second (right) triangle vertices: lt, rt, rb
+        // Texture coordinates go from top to bottom.
+        var x = sprite.x, y = sprite.y, z = sprite.z,
+            tx = sprite.tx, ty = sprite.ty, tw = sprite.tw, th = sprite.th;
+        // 1: lb
         buf[index++] = x; buf[index++] = y; buf[index++] = z;
-        buf[index++] = tx; buf[index++] = ty + 1.0;
-        // 0, 1
-        buf[index++] = x; buf[index++] = y + 1.0; buf[index++] = z;
         buf[index++] = tx; buf[index++] = ty;
-        // 1, 0
-        buf[index++] = x + 1.0; buf[index++] = y; buf[index++] = z;
-        buf[index++] = tx + 1.0; buf[index++] = ty + 1.0;
-        // right triangle
-        // 0, 1
-        buf[index++] = x; buf[index++] = y + 1.0; buf[index++] = z;
+        buf[index++] = 0; buf[index++] = 1;
+        // 1: lt
+        buf[index++] = x; buf[index++] = y + 1; buf[index++] = z;
         buf[index++] = tx; buf[index++] = ty;
-        // 1, 1
-        buf[index++] = x + 1.0; buf[index++] = y + 1.0; buf[index++] = z;
-        buf[index++] = tx + 1.0; buf[index++] = ty;
-        // 1, 0
-        buf[index++] = x + 1.0; buf[index++] = y; buf[index++] = z;
-        buf[index++] = tx + 1.0; buf[index++] = ty + 1.0;
+        buf[index++] = 0; buf[index++] = 0;
+        // 1: rb
+        buf[index++] = x + 1; buf[index++] = y; buf[index++] = z;
+        buf[index++] = tx; buf[index++] = ty;
+        buf[index++] = 1; buf[index++] = 1;
+        // 2: lt
+        buf[index++] = x; buf[index++] = y + 1; buf[index++] = z;
+        buf[index++] = tx; buf[index++] = ty;
+        buf[index++] = 0; buf[index++] = 0;
+        // 2: rt
+        buf[index++] = x + 1; buf[index++] = y + 1; buf[index++] = z;
+        buf[index++] = tx; buf[index++] = ty;
+        buf[index++] = 1; buf[index++] = 0;
+        // 2: rb
+        buf[index++] = x + 1; buf[index++] = y; buf[index++] = z;
+        buf[index++] = tx; buf[index++] = ty;
+        buf[index++] = 1; buf[index++] = 1;
         return index;
     }
 
@@ -125,7 +144,8 @@ exports.SpriteRender = (function () {
         this.texCoordAttrLoc = gl.getAttribLocation(prog, "tex_coord");
         this.projectionUnifLoc = gl.getUniformLocation(prog, "projection");
         this.samplerUnifLoc = gl.getUniformLocation(prog, "sampler");
-        this.texRatioUnifLoc = gl.getUniformLocation(prog, "tex_ratio");
+        this.texSizeUnifLoc = gl.getUniformLocation(prog, "tex_size");
+        this.texSpriteSizeUnifLoc = gl.getUniformLocation(prog, "tex_sprite_size");
     }
 
     SpriteRender.prototype.draw = function (buffers, projection) {
@@ -135,7 +155,8 @@ exports.SpriteRender = (function () {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.uniform1i(this.samplerUnifLoc, 0);
-        gl.uniform1f(this.texRatioUnifLoc, this.sheetConf.ratio);
+        gl.uniform1f(this.texSizeUnifLoc, this.sheetConf.size);
+        gl.uniform1f(this.texSpriteSizeUnifLoc, this.sheetConf.sprite_size);
         gl.uniformMatrix4fv(this.projectionUnifLoc, false, projection);
         gl.enableVertexAttribArray(positionAttrLoc);
         gl.enableVertexAttribArray(texCoordAttrLoc);
