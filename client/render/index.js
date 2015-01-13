@@ -28,6 +28,8 @@ gl.enable(gl.DEPTH_TEST);
 gl.depthFunc(gl.LESS);
 
 // init coordinate system
+var MAT4_IDENTITY = glm.mat4.create();
+glm.mat4.identity(MAT4_IDENTITY);
 var screenProjectionMatrix = glm.mat4.create();
 var cameraViewProjectionMatrix = glm.mat4.create();
 var scaleVec = glm.vec3.create(); scaleVec[2] = 1;
@@ -83,17 +85,11 @@ mapChunk.fill([
 ]);
 
 exports.redraw = function () {
-    glm.mat4.identity(cameraViewTransforms.scale);
-    glm.mat4.scale(cameraViewTransforms.scale, cameraViewTransforms.scale, scaleVec);
+    glm.mat4.scale(cameraViewTransforms.scale, MAT4_IDENTITY, scaleVec);
+    glm.mat4.translate(cameraViewTransforms.translation, MAT4_IDENTITY, cameraVec);
+    glm.mat4.rotate(cameraViewTransforms.rotation, MAT4_IDENTITY, rotationRad, [0, 0, 1]);
 
-    glm.mat4.identity(cameraViewTransforms.translation);
-    glm.mat4.translate(cameraViewTransforms.translation, cameraViewTransforms.translation, cameraVec);
-
-    glm.mat4.identity(cameraViewTransforms.rotation);
-    glm.mat4.rotate(cameraViewTransforms.rotation, cameraViewTransforms.rotation, rotationRad, [0, 0, 1]);
-
-    glm.mat4.identity(cameraViewProjectionMatrix);
-    glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.translation, cameraViewProjectionMatrix);
+    glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.translation, MAT4_IDENTITY);
     glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.scale, cameraViewProjectionMatrix);
     glm.mat4.multiply(cameraViewProjectionMatrix, cameraViewTransforms.rotation, cameraViewProjectionMatrix);
 

@@ -17,7 +17,7 @@ if (config.debug) {
 // Basic input handling
 var processInput = (function () {
     var zoomSpeed = 0.01;
-    var panSpeed = 0.01;
+    var panSpeed = 0.001;
     var rotateSpeed = 0.001;
     var actions = {
         zoomIn: function (t) {
