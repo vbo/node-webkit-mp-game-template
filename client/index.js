@@ -1,4 +1,4 @@
-var frame = require("./frame");
+var frame = require("./frame.js");
 var $ = frame.$;
 var guiWindow = frame.nativeGui.Window.get();
 var config = require("./config");

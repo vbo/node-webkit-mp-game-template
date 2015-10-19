@@ -1,6 +1,6 @@
 var async = require("async");
 
-var resource = require("../frame").resource;
+var resource = require("../frame.js").resource;
 var config = require("../config").render;
 
 var gl = require("./canvas").gl;

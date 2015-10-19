@@ -35,7 +35,8 @@ requirejs([
         function (clb) { sound.init(config.sound, clb); },
         function (clb) { graphics.init(config.graphics, clb); }
     ], function () {
-        require("../frame").init(gui, window, $, storage, resource, sound, graphics);
+        var frame = require("../frame.js");
+        frame.init(gui, window, $, storage, resource, sound, graphics);
         $('#preloader').hide();
         require("../index");
     });

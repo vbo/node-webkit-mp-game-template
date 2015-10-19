@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 
-var frame = require("../frame");
+var frame = require("../frame.js");
 var $ = frame.$;
 var graphics = frame.graphics;
 
