@@ -1,7 +1,7 @@
 // client code starts here
 // everything webkit-related is already preloaded in this point
-// and accessible through `./frame` module
-var frame = require("./frame");
+// and accessible through `./frame.js` module
+var frame = require("./frame.js");
 var config = require("./config");
 var render = require("./render");
 
