@@ -1,4 +1,4 @@
-var frame = require("./frame");
+var frame = require("./frame.js");
 var $ = frame.$;
 var config = require("./config");
 var render = require("./render");

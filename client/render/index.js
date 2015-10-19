@@ -1,7 +1,7 @@
 var glm = require("gl-matrix");
 
 var config = require("../config").render;
-var frame = require("../frame");
+var frame = require("../frame.js");
 var $ = frame.$;
 var graphics = frame.graphics;
 var resource = frame.resource;
